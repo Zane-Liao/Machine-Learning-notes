@@ -1,2 +1,2 @@
-# cs229
-- Problem Sets Solution
+# cs336
+- Buid LLM
