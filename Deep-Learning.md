@@ -1,4 +1,4 @@
-# Introdution to Deep Learning
+# Introduction to Deep Learning
 
 - Deep learning, a training method that combines computing power and data, has been widely used since the use of GPUs to train AlexNet on ImageNet in 2012.
 - We need to understand what deep learning is and how it differs from traditional machine learning.

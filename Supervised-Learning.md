@@ -220,6 +220,7 @@ $$
 3.33 & 6.67
 \end{bmatrix}
 $$
+
 ###### Why can the Covariance Matrix be used directly in a movie recommendation system based on collaborative filtering?
 Basic Idea: In a recommendation system, if the covariance between the ratings of two movies is high, it means that if a user likes movie A, they are also likely to like movie B (or that their ratings have the same trend). These movies are moving in the same direction in the "user rating space," so we can use the covariance to determine the similarity between the movies (covariance = similarity).
 
