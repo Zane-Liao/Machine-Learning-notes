@@ -1,56 +1,83 @@
 # Introduction to Reinforcement Learning
 
-- In contrast to supervised learning, unsupervised learning does not rely on labeled data for training.
-- The most common unsupervised learning algorithms include PCA, ICA, k-means, EM, and self-supervised learning.
+##### Some Personal Ideas and an Introduction to Reinforcement Learning
+- Reinforcement learning differs from other machine learning methods in that it relies on agents making decisions within an environment to learn.
+- There are many concepts in reinforcement learning, so I'd like to try to organize them according to my own understanding. Of course, this is just an introduction.
+- The core of reinforcement learning is the three major components: Value, Policy, Actor, and Critic. Almost all algorithms originate from these three components.
+- Deep reinforcement learning simply adds deep neural networks as a foundation and reinforcement learning as a method for learning.
+- There are also many derivatives of reinforcement learning, including control optimization and robotics.
+- To understand reinforcement learning, code or theory alone are not enough. Finding a framework and building a practical model from scratch is more useful than running 10 exercises on Colab. Because reinforcement learning interacts with the environment, we generally need a simulated or real environment to practice. 2D grids, 3D simulations, or even a real robot are all acceptable, but we must always remember that reinforcement learning interacts with the environment.
+- In reality, reinforcement learning is often combined with other machine learning methods. The entire LLM pipeline is a good example.
+- The most important challenges with reinforcement learning currently are insufficient data, the requirement for 99% or higher accuracy in real-world environments, and interpretability and safety issues.
+- Reinforcement learning relies on continuous interaction with the environment to learn, so, to some extent, relying on experience alone won't work for other machine learning methods.
+- Reinforcement learning is used in game playing, control optimization, and robotics, and may be a key step toward achieving AGI. Currently, AI has developed to the point where we have models that appear reasonably good, but these models lack autonomous action, self-feedback, and iteration, which are crucial for achieving AGI. If our AI models can't generate or generate unprecedented knowledge and behaviors, then we may never achieve AGI. Current models also lack the interpretability to generate new behaviors, as we don't know whether some of their actions are correct or incorrect. However, imposing constraints on the models reduces their capabilities. Furthermore, if the reward function is not optimal, our models may exhibit inappropriate behavior, which is central to safety.
+- Reinforcement learning suffers from high feedback costs. If we can use a component to accelerate reinforcement learning while maintaining its original effectiveness, this component could be a lifesaver for the current problems facing reinforcement learning.
+- It's important to give the model a discriminator that's good enough to directly use as feedback for most new behaviors. However, setting limits for this discriminator is difficult, and we currently don't know.
+- In the infinitely large real world, relying on just one learning algorithm is far from enough. In other words, we need a general-purpose learning algorithm.
+- I believe the human brain has something called intuition, which may be more important than IQ or other assessments. To achieve machine intuition, we must first allow it to think without constraints. To achieve such unconstrained thinking, we must enable it to autonomously explore and act. This feedback from exploration is what we call the process of forming "thinking" (this "thinking" is both surprising and dangerous).
+![[11111.png]]
 
-[[#Clustering]]
-[[#k-means algorithm]]
-[[#Principal Component Analysis (PCA)]]
-[[#Independent Component Analysis (ICA)]]
-[[#EM algorithms]]
-[[#Semi-Supervised Learning (EM + GMM)]]
-[[#Gaussian Mixture Models (GMM)]]
-[[#Self-supervised Learning]]
+[[#What is Reinforcement Learning]]
+[[#Value-based]]
+[[#Model-based]]
+[[#Policy/Value-Iteration]]
+[[#Policy-Gradient Methods]]
+[[#Actor-Critic (from-Policy-Gradient)]]
+[[#Inverse Reinforcement Learning]]
+[[#Offline RL]]
+[[#Online RL]]
+[[#Imitation Learning]]
+[[#Deep Reinforcement Learning]]
+[[#Multi-Agent RL]]
 
-##### Define
-- Given a set of samples $\{x_1, x_2, \dots, x_n\}$, which are independent and identically distributed from an unknown distribution $P_X$, the goal of unsupervised learning is to learn the underlying structure or generative distribution of the data without supervisory signals (labels, rewards), thereby obtaining an approximate model $\hat{P}_X$. , or a function $f(x)$ that learns the underlying patterns in the data.
+##### What is Reinforcement Learning
+- Reinforcement learning relies on the interaction between an agent and its environment. The basic framework of reinforcement learning originates from psychology.
+[[Screenshot 2025-09-21 17.50.09.png]]
+- For a detailed introduction to reinforcement learning concepts and Markov, please see my notes for Sections 2 and 4 of CS285.
 
-##### Clustering
-- What is clustering? Clustering is the process of dividing a collection of unlabeled data into different groups (clusters). Data within the same group is highly similar, while data from different groups differ significantly.
-- Common clustering algorithms include the k-means algorithm and the Gaussian Mixture Model (GMM).
+##### Policy/Value-Iteration
+- Value Iteration: Updates the state-value function $V(s)$ using the Bellman equation to obtain the optimal policy $\pi^*$.
+$$V_{k+1}(s) = \max_a \sum_{s'} P(s'|s,a)[R(s,a,s') + \gamma V_k(s')]$$
+- Policy Iteration: Alternates between Policy Evaluation and Policy Improvement until convergence.
 
-##### k-means algorithm
-- Steps of the k-means algorithm
-![[Screenshot 2025-09-21 17.31.37.png]]
+##### Value-based
+- Learns the state value $V(s)$ or action value $Q(s,a)$ and extracts the optimal policy from it.
+- Q-Learning:
+$$Q(s,a) \gets Q(s,a) + \alpha \big[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\big]$$
+- SARSA: Within the policy, updates depend on the next action.
 
-##### Principal Component Analysis (PCA)
-- Principal component analysis, finds one group of new orthogonal coordinate axes so that the variance of the data projections on these axes is large.
-- Dimensionality reduction + decorrelation
-- We use eigenvalue decomposition or SVD of the covariance matrix to obtain principal components.
-##### Independent Component Analysis (ICA)
-- Decomposes the observed signal into a set of independent statistical components.
-- In blind source separation (BSS), we require not only decorrelation but also high-order independent statistics (such as non-Gaussianity).
-- A well-known example is the cocktail party problem, where multiple microphones are separated into individual voices, and in financial quantitative trading, independent market factors are separated.
-##### EM algorithms
-- Expectation-Maximization Algorithm. In machine learning probabilistic models, there are many latent variables. In mixture models, it is unknown which cluster a sample belongs to. Maximizing the likelihood function (MLE) is often difficult because latent variables are unobservable.
-- EM Algorithm Steps
-1. Estimate the distribution of the latent variable using the current parameters (E-step)
-2. Under this distribution, maximize the expected log-likelihood and update the parameters (M-step)
-3. Continue iterating until convergence
-- EM algorithms are commonly used in GMM and HMM (Hidden Markov Model), as well as for handling missing data.
+##### Model-based
+- Learn the environment model $P(s'|s,a) and R(s,a)$, and use the model for planning (e.g., Value Iteration / Policy Iteration).
+- **Disadvantages**: Modeling is difficult, and model bias can accumulate.
 
-##### Semi-Supervised Learning (EM + GMM)
-- We call semi-supervised learning (EM + GMM) Semi-supervised learning is a learning method in which some data sets are labeled, while others are not.
-- We will only analyze GMM under semi-supervised learning.
-- GMM assumes that data are generated by a mixture of K Gaussian distributions.
-$$p(x|\theta) = \sum_{k=1}^K \pi_k \, \mathcal{N}(x|\mu_k, \Sigma_k)$$
-- The GMM algorithm under EM requires estimating the parameters $\theta = \{\pi_k, \mu_k, \Sigma_k\}$
-- The E-step (calculating the posterior probability that sample $x_i$ belongs to cluster k)
-$$\gamma_{ik} = P(z_i = k | x_i, \theta^{(t)}) = \frac{\pi_k \, \mathcal{N}(x_i|\mu_k, \Sigma_k)}{\sum_{j=1}^K \pi_j \, \mathcal{N}(x_i|\mu_j, \Sigma_j)}$$
-- M-step (parameter update)
-$$N_k = \sum_{i=1}^N \gamma_{ik}$$
-$$\pi_k^{(t+1)} = \frac{N_k}{N}, \quad
-\mu_k^{(t+1)} = \frac{1}{N_k} \sum_{i=1}^N \gamma_{ik} x_i$$
-$$\Sigma_k^{(t+1)} = \frac{1}{N_k} \sum_{i=1}^N \gamma_{ik} (x_i - \mu_k)(x_i - \mu_k)^T$$
-##### Self-supervised Learning
-- For self-supervised learning, see [[Introduction to Deep Learning]]
+##### Policy-Gradient Methods
+- Directly parameterize the policy $\pi_\theta(a|s)$, optimizing the expected cumulative reward:
+$$J(\theta) = \mathbb{E}_{\pi_\theta}[ \sum_t \gamma^t r_t]$$
+- For details on policy gradients, see [[Policy-Gradient]]
+
+##### Actor-Critic (from-Policy-Gradient)
+- **Actor**: Updates the policy $\pi_\theta$
+- **Critic**: Estimates the value function $V(s)$ or $Q(s,a)$, reducing variance and improving convergence speed.
+- For details, see Section 6 of cs285.
+
+##### Inverse Reinforcement Learning
+- Given the expert trajectory $\tau^E$, derive the hidden reward function $R(s,a)$
+- Application: Automatically imitate expert behavior and discover potential goals
+
+##### Offline RL
+- Offline reinforcement learning: Trains the policy using only an existing dataset, without interacting with the environment.
+
+Online RL
+- As the name suggests, in contrast to offline RL, this method learns by continuously interacting with the environment to generate data.
+
+##### Imitation Learning
+- Imitation learning: Directly imitates the expert behavior $\pi(a|s) \approx \pi^E(a|s)$
+- Common methods include Behavioral Cloning (BC) and DAgger. See Section 2 of cs285 for details.
+
+##### Deep Reinforcement Learning
+- Uses a Deep Neural Network to approximate the policy $\pi_\theta$ and the value function $Q_\theta(s,a)$
+- Application: DQN, DDPG, TD3, SAC PPO / A3C
+
+##### Multi-Agent RL
+- Multi-agent reinforcement learning, where multiple agents learn simultaneously, and the environment dynamics include the behavior of other agents.
+- Question: Instability and cooperative vs. adversarial
