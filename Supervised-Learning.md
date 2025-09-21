@@ -22,6 +22,9 @@
 [[#KNN]]
 [[#KD-Tree]]
 
+### Define
+[[1. Supervised Learning Formulations]]
+
 ### Regression and Classification
 
 Let's first look at the definitions:
@@ -29,14 +32,14 @@ Let's first look at the definitions:
 - Regression is learning a function 𝑓: 𝑋 → 𝑌, where the output space 𝑌 ⊆ 𝑅 is a subset of the field of continuous real numbers
 Let:
 * $\mathcal{X}$: input space (features)
-* $\mathcal{Y}$: output space (labels)
+* $\mathcal{Y}$: Output space (labels)
 ##### Classification
 * **Goal**: Learn $f: \mathcal{X} \to \mathcal{Y}$, where
 $$
 \mathcal{Y} = \{1, 2, \dots, K\} \quad (K \ge 2)
 $$
-is a finite set (e.g., cats/dogs/birds)
-* **Loss Function**: The most common is **0-1 loss**:
+is a finite set (e.g., cat/dog/bird)
+* **Loss Function**: The most common is the **0-1 loss**:
 $$
 L(f(x), y) = \begin{cases}
 0 & \text{if } f(x) = y \\
@@ -150,37 +153,36 @@ X =
 \text{---} (x^{(1)})^T \text{---} \\
 \text{---} (x^{(2)})^T \text{---} \\
 \vdots \\
-\text{---} (x^{(m)})^T \text{---}
-\end{bmatrix}
+\text{---} (x^{(m)})^T \text{---}\end{bmatrix}
 \in \mathbb{R}^{m \times n}
 $$
 Sample mean vector:
 $$
 \mu = \frac{1}{m} \sum_{i=1}^m x^{(i)} \in \mathbb{R}^n
 $$
-**Covariance Matrix** $\Sigma \in \mathbb{R}^{n \times n}$ is defined as:
+**Covariance matrix** $\Sigma \in \mathbb{R}^{n \times n}$ is defined as:
 $$
 \Sigma = \frac{1}{m} \sum_{i=1}^m (x^{(i)} - \mu)(x^{(i)} - \mu)^T
 = \mathbb{E}\left[(x - \mu)(x - \mu)^T\right]
 $$
-It can also be written in matrix form (the sample matrix is ​​$X$, with one sample per row):
+Can also be written in matrix form (sample matrix $X$, one sample per row):
 $$
 \Sigma = \frac{1}{m} (X - \mu)^T (X - \mu)
 $$
 
-- We know that for $\Sigma_{ij}$, it represents the relationship between the $i$th variable and the $j$th variable. Covariance of variables:
+- We know that $\Sigma_{ij}$ represents the covariance between the $i$th variable and the $j$th variable:
 $$
 \Sigma_{ij} = \text{Cov}(x_i, x_j) = \mathbb{E}[(x_i - \mu_i)(x_j - \mu_j)]
 $$
 So:
-* $\Sigma_{ii} = \text{Var}(x_i)$: Variance of variable $x_i$
-* $\Sigma_{ij} > 0$: Positive correlation
-* $\Sigma_{ij} < 0$: Negative correlation
-* $\Sigma_{ij} = 0$: Uncorrelated (but not necessarily independent)
+* $\Sigma_{ii} = \text{Var}(x_i)$: variance of variable $x_i$
+* $\Sigma_{ij} > 0$: positive correlation
+* $\Sigma_{ij} < 0$: negative correlation
+* $\Sigma_{ij} = 0$: uncorrelated (but not necessarily independent)
 
 ###### Visual Geometry
 * The covariance matrix describes the "scatter" of data points in all directions.
-* It can be thought of as the **shape** of the data. * If you plot a 2D data point cloud, the **eigenvector** of the covariance matrix gives the principal direction, and the **eigenvalue** gives the variance (length) in that direction → Principal Component Analysis (PCA) selects the principal eigenvector of the covariance matrix as the projection direction.
+* It can be thought of as the **shape outline** of the data. * If you plot a 2D data point cloud, the **eigenvector** of the covariance matrix gives the principal direction, and the **eigenvalue** gives the variance (length) in that direction → Principal Component Analysis (PCA) selects the principal eigenvector of the covariance matrix as the projection direction.
 
 - The Covariance Matrix generally satisfies
 1. $\Sigma = \Sigma^{T}$ (symmetry)
@@ -220,7 +222,6 @@ $$
 3.33 & 6.67
 \end{bmatrix}
 $$
-
 ###### Why can the Covariance Matrix be used directly in a movie recommendation system based on collaborative filtering?
 Basic Idea: In a recommendation system, if the covariance between the ratings of two movies is high, it means that if a user likes movie A, they are also likely to like movie B (or that their ratings have the same trend). These movies are moving in the same direction in the "user rating space," so we can use the covariance to determine the similarity between the movies (covariance = similarity).
 

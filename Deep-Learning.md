@@ -58,7 +58,7 @@ Back Propagation step:
 Output Error: $\delta^{[2]} = \frac{\partial L}{\partial z^{[2]}} = (\hat{y} - y) \cdot \sigma'(z^{[2]})$ 
 Hidden Error: $\delta^{[1]} = \frac{\partial L}{\partial z^{[1]}} = (W^{[2]})^T \delta^{[2]} \cdot \sigma'(z^{[1]})$ 
 Gradient Compute: 
-$\frac{\partial L}{\partial W^{[2]}} = \delta^{[2]} (a^{[1]})^T$
+$\frac{\partial L}{\partial W^{[2]}} = \delta^{[2]} (a^{[1]})^T$ 
 $\frac{\partial L}{\partial b^{[2]}} = \delta^{[2]}$ 
 $\frac{\partial L}{\partial W^{[1]}} = \delta^{[1]} x^T$ $\frac{\partial L}{\partial b^{[1]}} = \delta^{[1]}$
 - The specific details of backpropagation are not explained. We only need to know that the goal of the neural network is to minimize the loss function. Without the backpropagation algorithm, using other algorithms (such as numerical algorithms) requires a complexity of $O(n^2)$. With backpropagation, we can achieve the same complexity as forward propagation, $O(n)$.
@@ -222,24 +222,71 @@ $$y = \sum_{i \in \text{TopK}(G(x))} g_i(x) \cdot E_i(x)$$
 - Image Generation: GAN, VAE, Diffusion Model
 - Text Generation (GPT Series)
 - Data Augmentation and Simulation
-- I know very little about deep generative models, but if you want to go deeper, the best resource and lecture notes are [cs236](https://www.youtube.com/playlist?list=PLoROMvodv4rPOWA-omMM6STXaWW4FvJT8)
+- I know very little about deep generative models, but if you want to delve deeper, the best resources and lecture notes are [cs236](https://www.youtube.com/playlist?list=PLoROMvodv4rPOWA-omMM6STXaWW4FvJT8) and [cs231n](https://cs231n.stanford.edu/)
+![[Screenshot 2025-09-20 at 11.54.48.png]]
 
 ##### GAN
-- Training two networks—generator $G$ and discriminator $D$—to compete against each other
+- Training Two Networks—Generator $G$ and Discriminator $D$
 - Goal:
 $$\min_G \max_D \mathbb{E}_{x \sim p_\text{data}}[\log D(x)] + \mathbb{E}_{z \sim p_z}[\log (1 - D(G(z)))]$$
+- GAN variants include CD-GAN and Style-GAN. The difficulty in training GANs lies in the balance between the generator and the discriminator.
+![[Screenshot 2025-09-20 at 14.33.21.png]]
+![[Screenshot 2025-09-20 at 14.59.47.png]]
+![[Screenshot 2025-09-20 at 14.59.58.png]]
+- Training Step
+![[Screenshot 2025-09-20 at 15.04.58.png]]
+- Some Questions with the Training Model
+![[Screenshot 2025-09-20 at 15.49.13.png]]
+![[Screenshot 2025-09-20 at 15.49.00.png]]
 
 ##### VAE
-- Mapping data to latent space $z$ Then, reconstruct the data from the latent space.
+- Maps data to a latent space $z$ and then reconstructs data from the latent space
 - Encoder: $q_\phi(z \mid x)$
 - Decoder: $p_\theta(x \mid z)$
 - Goal (ELBO):
 $$\mathcal{L}(\theta, \phi; x) = \mathbb{E}_{q_\phi(z \mid x)}[\log p_\theta(x \mid z)] - \text{KL}(q_\phi(z \mid x) \| p(z))$$
+- One of the best lectures on this topic is [cs231n](https://www.youtube.com/watch?v=zbHXQRUNlH0&list=PLoROMvodv4rOmsNzYBMe0gJY2XS8AQg16&index=13)
+![[Screenshot 2025-09-19 at 22.38.29.png]]
+![[Screenshot 2025-09-19 at 22.38.40 1.png]]
+![[Screenshot 2025-09-19 at 22.38.05.png]]
+![[Screenshot 2025-09-19 at 22.37.49 1.png]]
 
 ##### Diffusion Model
-- Generate samples by gradually adding noise to the data and then learning the inverse process of denoising.
-- Diffusion models are also useful for generating text code in NLP, and some results have been achieved. For details, please refer to the Google paper.
+- Generates samples by gradually adding noise to the data and then learning the inverse process of removing the noise.
+- Diffusion This model is also useful for generating text code for NLP. Some progress has been made. For details, please refer to the Google paper.
 - Forward (+noise): $q(x_t \mid x_{t-1})$
 - Backward (-noise): Learning $p_\theta(x_{t-1} \mid x_t)$
-- Goal(ELBO)
+- Goal (ELBO)
 $$\mathcal{L}_{\text{ELBO}} = \mathbb{E} \Big[ \sum_{t=1}^T D_{KL}(q(x_t \mid x_{t-1}) \| p_\theta(x_{t-1} \mid x_t)) \Big]$$
+- Diffusion models are a complex class of models. According to the instructor of cs231n, there are three different mathematical formulations for derivation.derivation and notation, and a 5-page derivation
+- [Lilian weng's blog](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/)
+- [Sander Dielman's blog](https://sander.ai/2023/07/20/perspectives.html)
+-Some Paper:
+1. [Deep Unsupervised Learning using Nonequilibrium Thermodynamics](https://arxiv.org/pdf/1503.03585)
+2. [Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2006.11239)
+3. [SCORE-BASED GENERATIVE MODELING THROUGH STOCHASTIC DIFFERENTIAL EQUATIONS](https://arxiv.org/pdf/2011.13456)
+
+- High-level Overview
+![[Screenshot 2025-09-20 at 16.42.47.png]]
+- Intuitively, rectified flow models are a type of diffusion model.
+![[Pasted image 20250920183611.png]]
+![[Screenshot 2025-09-20 at 18.01.57.png]]
+![[Screenshot 2025-09-20 at 18.02.04.png]]
+![[Screenshot 2025-09-20 at 18.54.21.png]]
+![[Screenshot 2025-09-20 at 18.54.50.png]]
+![[Screenshot 2025-09-20 at 18.55.06.png]]
+![[Screenshot 2025-09-20 at 19.33.50.png]]
+![[Screenshot 2025-09-20 at 19.32.49.png]]
+![[Screenshot 2025-09-20 at 19.37.12.png]]
+![[Screenshot 2025-09-20 at 19.37.26.png]]
+- Modern Diffusion Model The most common one is Latent Diffusion Model (LDM) is essentially a combination of VAE, GAN, and Diffusion. Why? Because using modern diffusion models for tasks requires high-quality, well-generated data, which is the advantage of GANs. They can quickly generate latent spaces, which is the advantage of VAEs.
+![[Screenshot 2025-09-20 at 20.21.40.png]]
+![[Screenshot 2025-09-20 at 20.21.53.png]]
+##### Diffusion transformer
+![[Screenshot 2025-09-20 at 20.27.25.png]]
+- Some examples
+![[Screenshot 2025-09-20 at 20.32.08.png]]
+![[Screenshot 2025-09-20 at 20.32.19.png]]
+![[Screenshot September 20, 2025, at 20.40.29.png
+
+...For details, please see cs231n Lecture 14.

@@ -1,5 +1,3 @@
-# Introduction to Reinforcement Learning
-
 - In contrast to supervised learning, unsupervised learning does not rely on labeled data for training.
 - The most common unsupervised learning algorithms include PCA, ICA, k-means, EM, and self-supervised learning.
 
