@@ -24,6 +24,7 @@
 [[#GAN]]
 [[#VAE]]
 [[#Diffusion Model]]
+[[#LLM Inference]]
 
 ##### Neural Network
 - A neural network is a combination of linear transformation and activation function.
@@ -290,3 +291,20 @@ $$\mathcal{L}_{\text{ELBO}} = \mathbb{E} \Big[ \sum_{t=1}^T D_{KL}(q(x_t \mid x_
 ![[Screenshot September 20, 2025, at 20.40.29.png
 
 ...For details, please see cs231n Lecture 14.
+
+##### LLM Inference
+- We typically use Softmax to determine the probability of each token in the vocabulary, select the one with the highest probability (greedy search) and output it (using Tokenizer decode() to decode the token ID into a token). This token ID is then fed back into the model to predict the next token, looping until $<EOS>$ is generated or the maximum length is reached (the maximum number of tokens output is typically set in config.yaml, for example, 2048 tokens). This step is typically called autoregression.
+- If the maximum number of tokens output is not set, issues such as increased latency, increased GPU memory usage, and duplicate model output can occur.
+- For multimodal LMs, such as images, the output tokens are typically latent codes, which are converted back to pixel images by the Decoder.
+- The vector dimensions of visual and textual tokens must be consistent to be able to be placed in the same Transformer.
+- To speed up inference, we typically use a KV Cache.
+- The core of the KV Cache technique is to store the key-value pairs (KVs) calculated after each attention layer is computed. This saved KV is then used each time the model is inferred, rather than recalculating the previous KVs. Cache:
+```python
+
+cache[layer].k = [k1, k_k_new]
+cache[layer].v = [v1, v_new]
+```
+- Without using a KV cache, the time complexity is $O(N^{2} \cdot d)$. With a KV cache, the time complexity is reduced to $O(N \cdot d)$.
+- We typically use open-source libraries for LM output (HuggingFace Transformer, Ollama, etc.). This allows for generating a token and immediately returning it to the front-end interface or CLI. We call this step token-by-token streaming.
+- vLLM=>very fast LLM. This is an open-source inference engine specifically designed for LLM inference acceleration, supporting multi-user and high-concurrency scenarios. Its core technology is PageAttention, which addresses the problems of traditional KV caches: video memory fragmentation and memory waste. vLLM stores the KV cache as pages, rather than arrays. We can think of it as KV The cache implements "Virtual Memory" to support high concurrency. Compared to traditional one-shot batching, it can be interleaved, resulting in significantly higher concurrent throughput.
+- From a time complexity perspective, for an autoregressive model, the total complexity is $O(L \cdot N^{3} \cdot d)$, where L is the number of layers, N is the input sequence length, and d is the hidden dimension. Using only the KV Cache reduces the complexity to $O(L \cdot N^{2} \cdot d)$. Adding vLLM significantly reduces memory usage, while maintaining the overall complexity. Because P << N, vLLM only caches active pages, resulting in a memory usage of $P \times L \times d$, rather than the previous $N \times L \times d$.
